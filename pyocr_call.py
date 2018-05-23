@@ -7,6 +7,7 @@ import os
 import numpy as np
 from collections import defaultdict
 
+
 # is_int(value) takes in a value and attempts to type cast it
 # to an int.  If it fails, it returns false.  Otherwise, true.
 def is_int(value):
@@ -234,3 +235,18 @@ def get_array(imgpath):
         file.write('\n')
     file.close()
     return sudoku
+
+def solve_board(board):
+  print("Solving.")
+
+# construct the argument parse and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-i", "--image", required=True,
+	help="Path to Sudoku board that you wish to scan.")
+ap.add_argument("-s", "--solve", type=bool,
+	help="Whether or not you wish for the puzzle to be solved.")
+args = vars(ap.parse_args())
+
+board = get_array(args["image"])
+if args["solve"]:
+    solve_board(board)

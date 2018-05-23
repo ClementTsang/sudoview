@@ -1,15 +1,24 @@
-#include <cstdlib>
+#include <stdlib.h>
 #include <stdio.h>
-#include <iostream>
-#include "sudosolver.h"
 
+#define NONE 0
+#define N 9
+
+// Predeclare
+bool solve_sudoku(int grid[N][N]);
+bool find_unassign(int grid[N][N], int &row, int &col);
+bool used_in_row(int grid[N][N], int row, int num);
+bool used_in_col(int grid[N][N], int col, int num);
+bool used_in_box(int grid[N][N], int boxStartRow, int boxStartCol, int num);
+bool is_safe(int grid[N][N], int row, int col, int num);
+
+// Code
 bool solve_sudoku(int grid[N][N]) {
     int row = 0, col = 0;    
     if (!find_unassign(grid, row, col))
         return true; 
 
     for (int num = 1; num <= 9; ++num) {
-        // if looks promising
         if (is_safe(grid, row, col, num)) {
             grid[row][col] = num;
 
