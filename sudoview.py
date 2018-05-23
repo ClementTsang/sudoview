@@ -7,7 +7,6 @@ import os
 import numpy as np
 from collections import defaultdict
 
-
 # is_int(value) takes in a value and attempts to type cast it
 # to an int.  If it fails, it returns false.  Otherwise, true.
 def is_int(value):
@@ -169,7 +168,7 @@ def get_array(imgpath):
             if temp[0][1] >= 0 and temp[0][0] >= 0 and temp[0][1] <= h and temp[0][0] <= w:
                 inter_pt.append(temp)
     inter_pt = sorted(inter_pt, key=lambda k: [k[0][1], k[0][0]])
-    print("LEN: ", len(inter_pt)) #Testing
+    #print("LEN: ", len(inter_pt)) #Testing
 
     # Step 6 (subject to removal): Reduce excess points.
     if len(inter_pt) > 100:
@@ -227,33 +226,88 @@ def get_array(imgpath):
                 #print(0)
         sudoku.append(temp)
         os.remove(filename)
-    finalimg = "{}sudo_temp.png".format(os.getpid())
-    finaloutput = "sudo_out.txt"
-    file = open(finaloutput, "w")
-    for i in sudoku:
-        file.write(str(i))
-        file.write('\n')
-    file.close()
+    #finalimg = "{}sudo_temp.png".format(os.getpid())
+    #finaloutput = "sudo_out.txt"
+    #file = open(finaloutput, "w")
+    #for i in sudoku:
+    #    file.write(str(i))
+    #    file.write('\n')
+    #file.close()
     return sudoku
 
-def solve_board(board):
-    print("Solving.")
-    row = 0
-    col = 0
-    if !find_unassign(board, row, col):
+row = 0
+col = 0
+
+def solve_sudoku(board):
+    if not find_unassign(board):
         return True
 
+    prev_row = 0
+    prev_col = 0
+    global row
+    global col
+    for num in range(1, 10):
+        if is_safe(board, num):
+            board[row][col] = num
+            prev_row = row;
+            prev_col = col;
+            if solve_sudoku(board):
+                return True
+            else:
+                row = prev_row
+                col = prev_col
+                board[row][col] = 0
+    return False
+
+def find_unassign(board):
+    global row
+    global col
     for i in range(0, 9):
-        
+        for j in range(0, 9):
+            if board[i][j] == 0:
+                row = i
+                col = j
+                return True
+    return False
 
+def used_in_row(board, num):
+    global row
+    global col
+    for i in range(0, 9):
+        if board[row][i] == num:
+            return True
+    return False
 
+def used_in_col(board, num):
+    global row
+    global col
+    for i in range(0, 9):
+        if board[i][col] == num:
+            return True
+    return False
 
+def used_in_box(board, num):
+    global row
+    global col
+    for i in range(0, 3):
+        for j in range(0, 3):
+            if board[i+row-row%3][j+col-col%3] == num:
+                return True
+    return False
 
+def is_safe(board, num):
+    global row
+    global col
+    return not used_in_row(board, num) and not used_in_col(board, num) and not used_in_box(board, num)
 
-
-
-
-
+def print_board(board):
+    for i in range(0, 9):
+        print("[", end='')
+        for j in range(0, 9):
+            print(board[i][j], end='')
+            if j < 8:
+                print(", ", end='')
+        print("]")
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -262,7 +316,8 @@ ap.add_argument("-i", "--image", required=True,
 ap.add_argument("-s", "--solve", type=bool,
 	help="Whether or not you wish for the puzzle to be solved.")
 args = vars(ap.parse_args())
-
 board = get_array(args["image"])
 if args["solve"]:
-    solve_board(board)
+    print("Solving:")
+    solve_sudoku(board)
+    print_board(board)
