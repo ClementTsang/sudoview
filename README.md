@@ -1,6 +1,7 @@
-# sudoview
+## sudoview
 
-TO-DO:
-* Change it from square by square to line by line.  Or at least try.
-* Warped images!
-* Fix testcase 3.  It's still busted, no idea why.  Perhaps we should set it to b/w first?
+A program that uses OpenCV and PyTesseract to solve Sudoku boards.
+
+## Installation
+
+Just clone the repository, and run sudoview.py.
